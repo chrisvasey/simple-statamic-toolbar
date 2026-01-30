@@ -1,0 +1,37 @@
+{
+    "name": "chrisvasey/statamic-toolbar",
+    "description": "Frontend toolbar with Edit and Control Panel buttons for logged-in users",
+    "license": "MIT",
+    "keywords": [
+        "statamic",
+        "toolbar",
+        "edit",
+        "control-panel"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Chrisvasey\\StatamicToolbar\\": "src"
+        }
+    },
+    "require": {
+        "statamic/cms": "^6.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "pixelfear/composer-dist-plugin": true
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Statamic Toolbar",
+            "description": "Frontend toolbar with Edit and Control Panel buttons for logged-in users"
+        },
+        "laravel": {
+            "providers": [
+                "Chrisvasey\\StatamicToolbar\\ServiceProvider"
+            ]
+        }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "beta"
+}
