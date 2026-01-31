@@ -1,6 +1,6 @@
 {
-    "name": "chrisvasey/statamic-toolbar",
-    "description": "Frontend toolbar with Edit and Control Panel buttons for logged-in users",
+    "name": "chrisvasey/simple-statamic-toolbar",
+    "description": "A lightweight floating toolbar for Statamic that gives logged-in users quick access to the CP and entry editor",
     "license": "MIT",
     "keywords": [
         "statamic",
@@ -10,11 +10,23 @@
     ],
     "autoload": {
         "psr-4": {
-            "Chrisvasey\\StatamicToolbar\\": "src"
+            "Chrisvasey\\SimpleStatamicToolbar\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Chrisvasey\\SimpleStatamicToolbar\\Tests\\": "tests"
         }
     },
     "require": {
         "statamic/cms": "^6.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0",
+        "phpunit/phpunit": "^11.0"
+    },
+    "scripts": {
+        "test": "phpunit"
     },
     "config": {
         "allow-plugins": {
@@ -23,12 +35,12 @@
     },
     "extra": {
         "statamic": {
-            "name": "Statamic Toolbar",
-            "description": "Frontend toolbar with Edit and Control Panel buttons for logged-in users"
+            "name": "Simple Statamic Toolbar",
+            "description": "A lightweight floating toolbar for Statamic that gives logged-in users quick access to the CP and entry editor"
         },
         "laravel": {
             "providers": [
-                "Chrisvasey\\StatamicToolbar\\ServiceProvider"
+                "Chrisvasey\\SimpleStatamicToolbar\\ServiceProvider"
             ]
         }
     },
