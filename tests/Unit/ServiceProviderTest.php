@@ -2,7 +2,9 @@
 
 namespace Chrisvasey\SimpleStatamicToolbar\Tests\Unit;
 
+use Chrisvasey\SimpleStatamicToolbar\Http\Middleware\InjectToolbar;
 use Chrisvasey\SimpleStatamicToolbar\Tests\TestCase;
+use Illuminate\Routing\Router;
 
 class ServiceProviderTest extends TestCase
 {
@@ -25,5 +27,13 @@ class ServiceProviderTest extends TestCase
         $publishes = \Illuminate\Support\ServiceProvider::$publishGroups['simple-statamic-toolbar-views'] ?? [];
 
         $this->assertNotEmpty($publishes);
+    }
+
+    public function test_middleware_is_registered_in_web_group()
+    {
+        $router = $this->app->make(Router::class);
+        $middleware = $router->getMiddlewareGroups()['web'] ?? [];
+
+        $this->assertContains(InjectToolbar::class, $middleware);
     }
 }
