@@ -61,10 +61,12 @@ class ToolbarTest extends TestCase
         $this->assertStringContainsString('var(--toolbar-bg)', $this->templateContent);
     }
 
-    public function test_template_uses_inline_styles()
+    public function test_template_uses_scoped_style_block()
     {
-        $this->assertStringContainsString('style="position:fixed;', $this->templateContent);
-        $this->assertStringContainsString('style="display:flex;', $this->templateContent);
+        $this->assertStringContainsString('<style>', $this->templateContent);
+        $this->assertStringContainsString('.sst-toolbar', $this->templateContent);
+        $this->assertStringContainsString('.sst-toggle', $this->templateContent);
+        $this->assertStringContainsString('.sst-link', $this->templateContent);
     }
 
     public function test_template_does_not_use_nocache_wrapper()
@@ -75,5 +77,16 @@ class ToolbarTest extends TestCase
     public function test_template_does_not_use_toolbar_theme_tag()
     {
         $this->assertStringNotContainsString('{{ toolbar_theme }}', $this->templateContent);
+    }
+
+    public function test_template_defaults_to_closed()
+    {
+        $this->assertStringNotContainsString("open: true", $this->templateContent);
+    }
+
+    public function test_template_persists_state_to_local_storage()
+    {
+        $this->assertStringContainsString('localStorage.getItem', $this->templateContent);
+        $this->assertStringContainsString('localStorage.setItem', $this->templateContent);
     }
 }
