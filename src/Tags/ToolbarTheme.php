@@ -10,7 +10,7 @@ class ToolbarTheme extends Tags
 {
     protected static $handle = 'toolbar_theme';
 
-    public function index(): array
+    public static function index(): array
     {
         $theme = Color::theme();
         $darkTheme = Color::theme(dark: true);

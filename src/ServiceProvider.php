@@ -2,7 +2,9 @@
 
 namespace Chrisvasey\SimpleStatamicToolbar;
 
+use Chrisvasey\SimpleStatamicToolbar\Http\Middleware\InjectToolbar;
 use Chrisvasey\SimpleStatamicToolbar\Tags\ToolbarTheme;
+use Illuminate\Routing\Router;
 use Statamic\Providers\AddonServiceProvider;
 
 class ServiceProvider extends AddonServiceProvider
@@ -18,5 +20,8 @@ class ServiceProvider extends AddonServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/simple-statamic-toolbar'),
         ], 'simple-statamic-toolbar-views');
+
+        $router = $this->app->make(Router::class);
+        $router->pushMiddlewareToGroup('web', InjectToolbar::class);
     }
 }

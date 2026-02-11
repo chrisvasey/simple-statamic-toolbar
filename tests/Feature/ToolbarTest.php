@@ -17,17 +17,6 @@ class ToolbarTest extends TestCase
         );
     }
 
-    public function test_template_checks_logged_in_status()
-    {
-        $this->assertStringContainsString('{{ if logged_in }}', $this->templateContent);
-    }
-
-    public function test_template_uses_nocache_for_static_cache_compatibility()
-    {
-        $this->assertStringContainsString('{{ nocache }}', $this->templateContent);
-        $this->assertStringContainsString('{{ /nocache }}', $this->templateContent);
-    }
-
     public function test_template_links_to_control_panel()
     {
         $this->assertStringContainsString('{{ cp_url }}', $this->templateContent);
@@ -45,8 +34,13 @@ class ToolbarTest extends TestCase
     {
         $this->assertStringContainsString('x-data', $this->templateContent);
         $this->assertStringContainsString('x-show', $this->templateContent);
-        $this->assertStringContainsString('x-collapse', $this->templateContent);
+        $this->assertStringContainsString('x-transition', $this->templateContent);
         $this->assertStringContainsString('x-cloak', $this->templateContent);
+    }
+
+    public function test_template_does_not_require_alpine_collapse_plugin()
+    {
+        $this->assertStringNotContainsString('x-collapse', $this->templateContent);
     }
 
     public function test_template_has_accessible_toggle_button()
@@ -60,16 +54,26 @@ class ToolbarTest extends TestCase
         $this->assertStringContainsString('rel="noopener noreferrer"', $this->templateContent);
     }
 
-    public function test_template_uses_theme_tag()
-    {
-        $this->assertStringContainsString('{{ toolbar_theme }}', $this->templateContent);
-        $this->assertStringContainsString('{{ /toolbar_theme }}', $this->templateContent);
-    }
-
     public function test_template_uses_theme_css_variables()
     {
         $this->assertStringContainsString('--toolbar-bg:', $this->templateContent);
         $this->assertStringContainsString('--toolbar-bg-hover:', $this->templateContent);
         $this->assertStringContainsString('var(--toolbar-bg)', $this->templateContent);
+    }
+
+    public function test_template_uses_inline_styles()
+    {
+        $this->assertStringContainsString('style="position:fixed;', $this->templateContent);
+        $this->assertStringContainsString('style="display:flex;', $this->templateContent);
+    }
+
+    public function test_template_does_not_use_nocache_wrapper()
+    {
+        $this->assertStringNotContainsString('{{ nocache }}', $this->templateContent);
+    }
+
+    public function test_template_does_not_use_toolbar_theme_tag()
+    {
+        $this->assertStringNotContainsString('{{ toolbar_theme }}', $this->templateContent);
     }
 }
