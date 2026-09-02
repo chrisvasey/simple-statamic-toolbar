@@ -40,4 +40,19 @@ class ToolbarThemeTagTest extends TestCase
         $this->assertNotEmpty($result['primary']);
         $this->assertNotEmpty($result['global_header_bg']);
     }
+
+    public function test_tag_returns_fallback_colours_on_statamic_five()
+    {
+        if (class_exists(\Statamic\CP\Color::class)) {
+            $this->markTestSkipped('Statamic 5 only.');
+        }
+
+        $this->assertSame([
+            'primary' => '#4338ca',
+            'global_header_bg' => '#27272a',
+            'gray_800' => '#27272a',
+            'gray_700' => '#3f3f46',
+            'dark_primary' => '#818cf8',
+        ], ToolbarTheme::index());
+    }
 }

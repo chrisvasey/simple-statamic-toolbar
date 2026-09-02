@@ -13,7 +13,7 @@ A lightweight Statamic addon that adds a floating toolbar to the frontend for lo
 
 ## Requirements
 
-- Statamic 6+
+- Statamic 5.63+ or 6.x
 - Alpine.js 3.x (included with Statamic by default)
 
 ## Installation
