@@ -3,7 +3,6 @@
 namespace Chrisvasey\SimpleStatamicToolbar\Tags;
 
 use Statamic\CP\Color;
-use Statamic\Facades\Preference;
 use Statamic\Tags\Tags;
 
 class ToolbarTheme extends Tags
@@ -12,6 +11,16 @@ class ToolbarTheme extends Tags
 
     public static function index(): array
     {
+        if (! class_exists(Color::class)) {
+            return [
+                'primary' => '#4338ca',
+                'global_header_bg' => '#27272a',
+                'gray_800' => '#27272a',
+                'gray_700' => '#3f3f46',
+                'dark_primary' => '#818cf8',
+            ];
+        }
+
         $theme = Color::theme();
         $darkTheme = Color::theme(dark: true);
 
