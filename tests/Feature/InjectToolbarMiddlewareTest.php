@@ -3,6 +3,7 @@
 namespace Chrisvasey\SimpleStatamicToolbar\Tests\Feature;
 
 use Chrisvasey\SimpleStatamicToolbar\Http\Middleware\InjectToolbar;
+use Chrisvasey\SimpleStatamicToolbar\ServiceProvider;
 use Chrisvasey\SimpleStatamicToolbar\Tests\TestCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -117,5 +118,79 @@ class InjectToolbarMiddlewareTest extends TestCase
 
         $content = $response->getContent();
         $this->assertStringNotContainsString('class="sst-toolbar"', $content);
+    }
+
+    public function test_renders_the_published_antlers_override_with_toolbar_data(): void
+    {
+        $this->actingAs(User::make()->email('test@example.com')->makeSuper());
+        $temporaryPath = sys_get_temp_dir().'/simple-statamic-toolbar-'.bin2hex(random_bytes(8));
+        $viewPath = $temporaryPath.'/views/vendor/simple-statamic-toolbar/components/_toolbar.antlers.html';
+
+        try {
+            $this->app['files']->ensureDirectoryExists(dirname($viewPath));
+            $this->app['files']->put($viewPath, '<aside data-toolbar="published-override">{{ toolbar_script_url }}</aside>');
+            config(['view.paths' => [$temporaryPath.'/views']]);
+            $this->app['view']->replaceNamespace('simple-statamic-toolbar', []);
+            (new ServiceProvider($this->app))->bootAddon();
+
+            $this->assertSame($viewPath, $this->app['view']->getFinder()->find('simple-statamic-toolbar::components._toolbar'));
+
+            $response = $this->callMiddleware($this->makeRequest(), $this->makeHtmlResponse());
+            $scriptUrl = asset('vendor/simple-statamic-toolbar/js/toolbar.js')
+                .'?v='.md5_file(__DIR__.'/../../resources/js/toolbar.js');
+
+            $this->assertStringContainsString('<aside data-toolbar="published-override">'.$scriptUrl.'</aside>', $response->getContent());
+            $this->assertStringNotContainsString('class="sst-toolbar"', $response->getContent());
+        } finally {
+            $this->app['files']->deleteDirectory($temporaryPath);
+        }
+    }
+
+    public function test_injects_toolbar_once_before_uppercase_and_mixed_case_closing_body_tags(): void
+    {
+        $this->actingAs(User::make()->email('test@example.com')->makeSuper());
+
+        foreach (['</BODY>', '</BoDy>'] as $closingTag) {
+            $response = $this->callMiddleware(
+                $this->makeRequest(),
+                new Response('<html><body>Hello'.$closingTag.'</html>', 200, ['Content-Type' => 'text/html'])
+            );
+
+            $content = $response->getContent();
+            $this->assertSame(1, substr_count($content, 'class="sst-toolbar"'));
+            $this->assertLessThan(stripos($content, '</body>'), strpos($content, 'class="sst-toolbar"'));
+        }
+    }
+
+    public function test_control_panel_link_preserves_the_request_subdirectory(): void
+    {
+        $this->actingAs(User::make()->email('test@example.com')->makeSuper());
+        $request = Request::create('https://example.com/subdirectory/about', 'GET', [], [], [], [
+            'SCRIPT_NAME' => '/subdirectory/index.php',
+            'SCRIPT_FILENAME' => '/var/www/html/subdirectory/index.php',
+            'PHP_SELF' => '/subdirectory/index.php',
+        ]);
+        $this->app->instance('request', $request);
+        $this->app['url']->setRequest($request);
+
+        $this->assertSame('/subdirectory', $request->getBaseUrl());
+
+        $response = $this->callMiddleware($request, $this->makeHtmlResponse());
+
+        $this->assertStringContainsString('href="https://example.com/subdirectory/cp"', $response->getContent());
+    }
+
+    public function test_preserves_closing_body_text_inside_scripts(): void
+    {
+        $this->actingAs(User::make()->email('test@example.com')->makeSuper());
+        $script = '<script>const closingTag = "</BODY>";</script>';
+
+        $response = $this->callMiddleware(
+            $this->makeRequest(),
+            new Response('<html><body>'.$script.'Hello</body></html>', 200, ['Content-Type' => 'text/html'])
+        );
+
+        $this->assertStringContainsString($script, $response->getContent());
+        $this->assertSame(1, substr_count($response->getContent(), 'class="sst-toolbar"'));
     }
 }

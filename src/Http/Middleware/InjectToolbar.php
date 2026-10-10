@@ -20,15 +20,16 @@ class InjectToolbar
         }
 
         $content = $response->getContent();
+        $closingBodyPosition = strripos($content, '</body>');
 
-        if (stripos($content, '</body>') === false) {
+        if ($closingBodyPosition === false) {
             return $response;
         }
 
         $toolbar = $this->renderToolbar($request);
 
         $response->setContent(
-            str_replace('</body>', $toolbar.'</body>', $content)
+            substr_replace($content, $toolbar, $closingBodyPosition, 0)
         );
 
         return $response;
@@ -65,12 +66,12 @@ class InjectToolbar
 
         $data = array_merge($theme, [
             'edit_url' => $entry?->editUrl(),
-            'cp_url' => '/'.config('statamic.cp.route', 'cp'),
+            'cp_url' => cp_route('index'),
             'toolbar_script_url' => asset('vendor/simple-statamic-toolbar/js/toolbar.js')
                 .'?v='.md5_file(__DIR__.'/../../../resources/js/toolbar.js'),
         ]);
 
-        $template = file_get_contents(__DIR__.'/../../../resources/views/components/_toolbar.antlers.html');
+        $template = file_get_contents(view()->getFinder()->find('simple-statamic-toolbar::components._toolbar'));
 
         return (string) Antlers::parse($template, $data);
     }
