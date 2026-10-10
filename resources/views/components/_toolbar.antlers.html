@@ -4,56 +4,50 @@
     .sst-toggle { display: flex; height: 2.25rem; width: 2.25rem; align-items: center; justify-content: center; border-radius: 9999px; color: #fff; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1); background: var(--toolbar-bg); border: none; cursor: pointer; padding: 0; transition: background .15s ease; }
     .sst-icon { height: 1rem; width: 1rem; }
     .sst-icon-sm { height: 0.875rem; width: 0.875rem; }
-    .sst-menu { display: flex; flex-direction: column; gap: 0.375rem; }
+    .sst-menu { display: flex; flex-direction: column; gap: 0.375rem; animation: sst-menu-in .2s ease-out; }
     .sst-link { display: inline-flex; align-items: center; gap: 0.375rem; white-space: nowrap; border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.75rem; font-weight: 500; color: #fff; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1); background: var(--toolbar-bg); text-decoration: none; transition: background .15s ease; }
+    .sst-toggle:hover, .sst-link:hover { background: var(--toolbar-bg-hover); }
+    .sst-toggle:focus-visible, .sst-link:focus-visible { outline: 2px solid var(--toolbar-primary); outline-offset: 3px; }
+    .sst-toggle[aria-expanded="true"] .sst-pencil, .sst-toggle[aria-expanded="false"] .sst-close, .sst-menu[hidden] { display: none; }
+    @keyframes sst-menu-in { from { opacity: 0; transform: translateY(.5rem); } }
+    @media (prefers-reduced-motion: reduce) {
+        .sst-menu { animation: none; }
+        .sst-toggle, .sst-link { transition: none; }
+    }
 </style>
 <div
-    x-data="{ open: localStorage.getItem('statamic-toolbar-open') === 'true' }"
-    x-effect="localStorage.setItem('statamic-toolbar-open', open)"
-    x-cloak
     class="sst-toolbar"
     style="--toolbar-bg: {{ global_header_bg }}; --toolbar-bg-hover: {{ gray_700 }}; --toolbar-primary: {{ primary }};"
 >
     <div class="sst-inner">
         {{# Toggle button — always visible #}}
         <button
-            x-on:click="open = !open"
+            type="button"
             class="sst-toggle"
-            x-on:mouseenter="$el.style.background = 'var(--toolbar-bg-hover)'"
-            x-on:mouseleave="$el.style.background = 'var(--toolbar-bg)'"
-            :aria-label="open ? 'Collapse toolbar' : 'Expand toolbar'"
+            aria-label="Expand toolbar"
+            aria-expanded="false"
+            aria-controls="sst-menu"
         >
             {{# Pencil icon (closed) #}}
-            <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="sst-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="sst-icon sst-pencil" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
             {{# X icon (open) #}}
-            <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="sst-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="sst-icon sst-close" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
 
         {{# Menu — slides up above toggle #}}
-        <div
-            x-show="open"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 transform translate-y-2"
-            x-transition:enter-end="opacity-100 transform translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 transform translate-y-0"
-            x-transition:leave-end="opacity-0 transform translate-y-2"
-            class="sst-menu"
-        >
+        <div id="sst-menu" class="sst-menu" hidden>
             {{ if edit_url }}
                 <a
                     href="{{ edit_url }}"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="sst-link"
-                    x-on:mouseenter="$el.style.background = 'var(--toolbar-bg-hover)'"
-                    x-on:mouseleave="$el.style.background = 'var(--toolbar-bg)'"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="sst-icon-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="sst-icon-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                     Edit
@@ -65,10 +59,8 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 class="sst-link"
-                x-on:mouseenter="$el.style.background = 'var(--toolbar-bg-hover)'"
-                x-on:mouseleave="$el.style.background = 'var(--toolbar-bg)'"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" class="sst-icon-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="sst-icon-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
@@ -77,3 +69,28 @@
         </div>
     </div>
 </div>
+<script>
+    (() => {
+        const toolbar = document.currentScript.previousElementSibling;
+        const toggle = toolbar.querySelector('.sst-toggle');
+        const menu = toolbar.querySelector('.sst-menu');
+        const setOpen = (open) => {
+            toggle.setAttribute('aria-expanded', String(open));
+            toggle.setAttribute('aria-label', open ? 'Collapse toolbar' : 'Expand toolbar');
+            menu.hidden = !open;
+        };
+
+        try {
+            setOpen(localStorage.getItem('statamic-toolbar-open') === 'true');
+        } catch {}
+
+        toggle.addEventListener('click', () => {
+            const open = toggle.getAttribute('aria-expanded') !== 'true';
+            setOpen(open);
+
+            try {
+                localStorage.setItem('statamic-toolbar-open', String(open));
+            } catch {}
+        });
+    })();
+</script>

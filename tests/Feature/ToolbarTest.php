@@ -30,22 +30,18 @@ class ToolbarTest extends TestCase
         $this->assertStringContainsString('Edit', $this->templateContent);
     }
 
-    public function test_template_uses_alpine_for_interactivity()
+    public function test_template_includes_its_own_javascript(): void
     {
-        $this->assertStringContainsString('x-data', $this->templateContent);
-        $this->assertStringContainsString('x-show', $this->templateContent);
-        $this->assertStringContainsString('x-transition', $this->templateContent);
-        $this->assertStringContainsString('x-cloak', $this->templateContent);
-    }
-
-    public function test_template_does_not_require_alpine_collapse_plugin()
-    {
-        $this->assertStringNotContainsString('x-collapse', $this->templateContent);
+        $this->assertStringContainsString('<script>', $this->templateContent);
+        $this->assertDoesNotMatchRegularExpression('/\\s(?:x-[\\w:-]+|:aria-label)=/', $this->templateContent);
     }
 
     public function test_template_has_accessible_toggle_button()
     {
-        $this->assertStringContainsString(':aria-label', $this->templateContent);
+        $this->assertStringContainsString('type="button"', $this->templateContent);
+        $this->assertStringContainsString('aria-label="Expand toolbar"', $this->templateContent);
+        $this->assertStringContainsString('aria-expanded="false"', $this->templateContent);
+        $this->assertStringContainsString('aria-controls="sst-menu"', $this->templateContent);
     }
 
     public function test_template_opens_links_in_new_tab()
@@ -81,7 +77,14 @@ class ToolbarTest extends TestCase
 
     public function test_template_defaults_to_closed()
     {
-        $this->assertStringNotContainsString("open: true", $this->templateContent);
+        $this->assertStringContainsString('id="sst-menu" class="sst-menu" hidden', $this->templateContent);
+    }
+
+    public function test_template_respects_reduced_motion(): void
+    {
+        $this->assertStringContainsString('@media (prefers-reduced-motion: reduce)', $this->templateContent);
+        $this->assertStringContainsString('animation: none;', $this->templateContent);
+        $this->assertStringContainsString('transition: none;', $this->templateContent);
     }
 
     public function test_template_persists_state_to_local_storage()

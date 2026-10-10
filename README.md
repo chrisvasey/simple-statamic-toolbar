@@ -7,14 +7,13 @@ A lightweight Statamic addon that adds a floating toolbar to the frontend for lo
 - **Zero config** — install and it works immediately
 - **Edit button** — opens the current entry in the CP editor (shown when an `edit_url` is available)
 - **Control Panel button** — links to the CP dashboard
-- **Collapsible** — toggle open/closed with smooth animation
+- **Collapsible** — toggle open/closed and remember your preference
 - **Logged-in users only** — hidden from public visitors
-- **No frontend dependencies** — uses inline styles (no Tailwind required) and Alpine's built-in transitions (no plugins required)
+- **No frontend dependencies** — includes its own styles and JavaScript (no Alpine or Tailwind required)
 
 ## Requirements
 
 - Statamic 5.63+ or 6.x
-- Alpine.js 3.x (included with Statamic by default)
 
 ## Installation
 
@@ -38,6 +37,7 @@ This copies the view to `resources/views/vendor/simple-statamic-toolbar/` where 
 
 ```bash
 composer test
+node --test tests/toolbar.test.mjs
 ```
 
 ## License
