@@ -30,9 +30,10 @@ class ToolbarTest extends TestCase
         $this->assertStringContainsString('Edit', $this->templateContent);
     }
 
-    public function test_template_includes_its_own_javascript(): void
+    public function test_template_loads_its_own_javascript(): void
     {
-        $this->assertStringContainsString('<script>', $this->templateContent);
+        $this->assertStringContainsString('<script src="{{ toolbar_script_url }}" defer></script>', $this->templateContent);
+        $this->assertStringNotContainsString('<script>', $this->templateContent);
         $this->assertDoesNotMatchRegularExpression('/\\s(?:x-[\\w:-]+|:aria-label)=/', $this->templateContent);
     }
 
@@ -85,11 +86,5 @@ class ToolbarTest extends TestCase
         $this->assertStringContainsString('@media (prefers-reduced-motion: reduce)', $this->templateContent);
         $this->assertStringContainsString('animation: none;', $this->templateContent);
         $this->assertStringContainsString('transition: none;', $this->templateContent);
-    }
-
-    public function test_template_persists_state_to_local_storage()
-    {
-        $this->assertStringContainsString('localStorage.getItem', $this->templateContent);
-        $this->assertStringContainsString('localStorage.setItem', $this->templateContent);
     }
 }

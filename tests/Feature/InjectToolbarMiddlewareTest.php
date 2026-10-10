@@ -50,6 +50,9 @@ class InjectToolbarMiddlewareTest extends TestCase
         $content = $response->getContent();
         $this->assertStringContainsString('class="sst-toolbar"', $content);
         $this->assertStringContainsString('Control Panel', $content);
+        $scriptUrl = asset('vendor/simple-statamic-toolbar/js/toolbar.js')
+            .'?v='.md5_file(__DIR__.'/../../resources/js/toolbar.js');
+        $this->assertStringContainsString('<script src="'.$scriptUrl.'" defer></script>', $content);
         $this->assertStringContainsString('</body>', $content);
     }
 
@@ -62,6 +65,7 @@ class InjectToolbarMiddlewareTest extends TestCase
 
         $content = $response->getContent();
         $this->assertStringNotContainsString('class="sst-toolbar"', $content);
+        $this->assertStringNotContainsString('toolbar.js', $content);
     }
 
     public function test_does_not_inject_for_cp_routes()

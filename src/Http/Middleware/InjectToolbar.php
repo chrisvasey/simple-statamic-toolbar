@@ -66,6 +66,8 @@ class InjectToolbar
         $data = array_merge($theme, [
             'edit_url' => $entry?->editUrl(),
             'cp_url' => '/'.config('statamic.cp.route', 'cp'),
+            'toolbar_script_url' => asset('vendor/simple-statamic-toolbar/js/toolbar.js')
+                .'?v='.md5_file(__DIR__.'/../../../resources/js/toolbar.js'),
         ]);
 
         $template = file_get_contents(__DIR__.'/../../../resources/views/components/_toolbar.antlers.html');

@@ -13,6 +13,10 @@ class ServiceProvider extends AddonServiceProvider
         ToolbarTheme::class,
     ];
 
+    protected $publishables = [
+        __DIR__.'/../resources/js/toolbar.js' => 'js/toolbar.js',
+    ];
+
     public function bootAddon(): void
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'simple-statamic-toolbar');
