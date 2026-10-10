@@ -179,4 +179,18 @@ class InjectToolbarMiddlewareTest extends TestCase
 
         $this->assertStringContainsString('href="https://example.com/subdirectory/cp"', $response->getContent());
     }
+
+    public function test_preserves_closing_body_text_inside_scripts(): void
+    {
+        $this->actingAs(User::make()->email('test@example.com')->makeSuper());
+        $script = '<script>const closingTag = "</BODY>";</script>';
+
+        $response = $this->callMiddleware(
+            $this->makeRequest(),
+            new Response('<html><body>'.$script.'Hello</body></html>', 200, ['Content-Type' => 'text/html'])
+        );
+
+        $this->assertStringContainsString($script, $response->getContent());
+        $this->assertSame(1, substr_count($response->getContent(), 'class="sst-toolbar"'));
+    }
 }

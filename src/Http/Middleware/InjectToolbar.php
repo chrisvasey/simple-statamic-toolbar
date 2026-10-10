@@ -20,15 +20,16 @@ class InjectToolbar
         }
 
         $content = $response->getContent();
+        $closingBodyPosition = strripos($content, '</body>');
 
-        if (stripos($content, '</body>') === false) {
+        if ($closingBodyPosition === false) {
             return $response;
         }
 
         $toolbar = $this->renderToolbar($request);
 
         $response->setContent(
-            str_ireplace('</body>', $toolbar.'</body>', $content)
+            substr_replace($content, $toolbar, $closingBodyPosition, 0)
         );
 
         return $response;
