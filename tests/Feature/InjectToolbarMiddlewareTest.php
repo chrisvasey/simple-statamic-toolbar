@@ -48,7 +48,7 @@ class InjectToolbarMiddlewareTest extends TestCase
         );
 
         $content = $response->getContent();
-        $this->assertStringContainsString('x-data=', $content);
+        $this->assertStringContainsString('class="sst-toolbar"', $content);
         $this->assertStringContainsString('Control Panel', $content);
         $this->assertStringContainsString('</body>', $content);
     }
@@ -61,7 +61,7 @@ class InjectToolbarMiddlewareTest extends TestCase
         );
 
         $content = $response->getContent();
-        $this->assertStringNotContainsString('x-data=', $content);
+        $this->assertStringNotContainsString('class="sst-toolbar"', $content);
     }
 
     public function test_does_not_inject_for_cp_routes()
@@ -78,7 +78,7 @@ class InjectToolbarMiddlewareTest extends TestCase
         );
 
         $content = $response->getContent();
-        $this->assertStringNotContainsString('x-data=', $content);
+        $this->assertStringNotContainsString('class="sst-toolbar"', $content);
     }
 
     public function test_does_not_inject_for_non_html_responses()
@@ -95,7 +95,7 @@ class InjectToolbarMiddlewareTest extends TestCase
         );
 
         $content = $response->getContent();
-        $this->assertStringNotContainsString('x-data=', $content);
+        $this->assertStringNotContainsString('class="sst-toolbar"', $content);
     }
 
     public function test_does_not_inject_for_non_200_responses()
@@ -112,6 +112,6 @@ class InjectToolbarMiddlewareTest extends TestCase
         );
 
         $content = $response->getContent();
-        $this->assertStringNotContainsString('x-data=', $content);
+        $this->assertStringNotContainsString('class="sst-toolbar"', $content);
     }
 }
