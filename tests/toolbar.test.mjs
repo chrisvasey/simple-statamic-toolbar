@@ -3,8 +3,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
 
-const template = readFileSync(new URL('../resources/views/components/_toolbar.antlers.html', import.meta.url), 'utf8');
-const script = template.match(/<script>([\s\S]*?)<\/script>/)[1];
+const script = readFileSync(new URL('../resources/js/toolbar.js', import.meta.url), 'utf8');
 
 function toolbarWithStorage(storage) {
     const attributes = new Map([
